@@ -4,12 +4,37 @@ import { Footer } from "@/components/layout/footer";
 import { experienceData } from "@/lib/data/experience";
 import { TimelineItem } from "@/components/ui/timeline-item";
 import { pageSeo } from "@/lib/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = pageSeo.experience;
 
 export default function ExperiencePage() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Professional Experience | Nirmal Rathod",
+        "description": pageSeo.experience.description,
+        "url": "https://nirmal-rathod.vercel.app/experience",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nirmal-rathod.vercel.app"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Experience",
+              "item": "https://nirmal-rathod.vercel.app/experience"
+            }
+          ]
+        }
+      }} />
       <Navbar />
       <main className="pt-32 pb-24 min-h-screen">
         <div className="container mx-auto px-4 md:px-8 max-w-4xl">

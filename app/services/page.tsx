@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { servicesData } from "@/lib/data/services";
 import { pageSeo } from "@/lib/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 import { PenTool, Layout, Code, Share2, CheckCircle2, type LucideIcon } from "lucide-react";
 
 export const metadata: Metadata = pageSeo.services;
@@ -17,6 +18,46 @@ const iconMap: Record<string, LucideIcon> = {
 export default function ServicesPage() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Design & Development Services",
+        "provider": {
+          "@type": "Person",
+          "name": "Nirmal Rathod"
+        },
+        "description": pageSeo.services.description,
+        "url": "https://nirmal-rathod.vercel.app/services",
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Professional Services",
+          "itemListElement": servicesData.map((s) => ({
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": s.title,
+              "description": s.description
+            }
+          }))
+        },
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nirmal-rathod.vercel.app"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Services",
+              "item": "https://nirmal-rathod.vercel.app/services"
+            }
+          ]
+        }
+      }} />
       <Navbar />
       <main className="pt-32 pb-24 min-h-screen">
         <div className="container mx-auto px-4 md:px-8 max-w-5xl">

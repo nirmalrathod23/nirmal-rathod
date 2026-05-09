@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/private/',
     },
-    sitemap: 'https://nirmalrathod.com/sitemap.xml',
+    sitemap: 'https://nirmal-rathod.vercel.app/sitemap.xml',
   };
 }

@@ -3,12 +3,37 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import { pageSeo } from "@/lib/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = pageSeo.projects;
 
 export default function ProjectsPage() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Selected Projects by Nirmal Rathod",
+        "description": pageSeo.projects.description,
+        "url": "https://nirmal-rathod.vercel.app/projects",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nirmal-rathod.vercel.app"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Projects",
+              "item": "https://nirmal-rathod.vercel.app/projects"
+            }
+          ]
+        }
+      }} />
       <Navbar />
       <main className="pt-32 pb-24 min-h-screen">
         <div className="container mx-auto px-4 md:px-8 max-w-6xl">

@@ -7,10 +7,33 @@ import { About } from "@/components/sections/about";
 import { Experience } from "@/components/sections/experience";
 import { Testimonials } from "@/components/sections/testimonials";
 import { ContactCTA } from "@/components/sections/contact";
+import { Metadata } from "next";
+import { pageSeo, schemas } from "@/lib/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+
+export const metadata: Metadata = pageSeo.home;
 
 export default function Home() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": pageSeo.home.title,
+        "description": pageSeo.home.description,
+        "url": "https://nirmal-rathod.vercel.app",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nirmal-rathod.vercel.app"
+            }
+          ]
+        }
+      }} />
       <Navbar />
       <main>
         <Hero />

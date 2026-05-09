@@ -3,12 +3,37 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 import { pageSeo } from "@/lib/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = pageSeo.about;
 
 export default function AboutPage() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "name": "About Nirmal Rathod",
+        "description": pageSeo.about.description,
+        "url": "https://nirmal-rathod.vercel.app/about",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nirmal-rathod.vercel.app"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "About",
+              "item": "https://nirmal-rathod.vercel.app/about"
+            }
+          ]
+        }
+      }} />
       <Navbar />
       <main className="pt-32 pb-24">
         <div className="container mx-auto px-4 md:px-8 max-w-4xl">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Clock } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { JsonLd } from "@/components/seo/json-ld";
 import { blogData, type ContentBlock } from "@/lib/data/blog";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 
@@ -71,6 +72,42 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post.title,
+        "description": post.excerpt,
+        "image": post.coverImage,
+        "datePublished": post.date,
+        "author": {
+          "@type": "Person",
+          "name": post.author
+        },
+        "url": `https://nirmal-rathod.vercel.app/blog/${slug}`,
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nirmal-rathod.vercel.app"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Blog",
+              "item": "https://nirmal-rathod.vercel.app/blog"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": post.title,
+              "item": `https://nirmal-rathod.vercel.app/blog/${slug}`
+            }
+          ]
+        }
+      }} />
       <Navbar />
       <main className="pt-32 pb-24 min-h-screen">
         <div className="container mx-auto px-4 md:px-8 max-w-5xl">

@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://nirmalrathod.com';
+  const baseUrl = 'https://nirmal-rathod.vercel.app';
 
   // Core static pages
   const staticPages = [

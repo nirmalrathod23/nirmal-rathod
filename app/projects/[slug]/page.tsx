@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { JsonLd } from "@/components/seo/json-ld";
 import { projectsData, type ProjectGalleryItem } from "@/lib/data/projects";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 import { SkillChip } from "@/components/ui/skill-chip";
@@ -88,6 +89,41 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        "name": project.title,
+        "description": project.shortDescription,
+        "image": project.coverImage,
+        "author": {
+          "@type": "Person",
+          "name": "Nirmal Rathod"
+        },
+        "url": `https://nirmal-rathod.vercel.app/projects/${slug}`,
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nirmal-rathod.vercel.app"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Projects",
+              "item": "https://nirmal-rathod.vercel.app/projects"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": project.title,
+              "item": `https://nirmal-rathod.vercel.app/projects/${slug}`
+            }
+          ]
+        }
+      }} />
       <Navbar />
       <main className="pt-32 pb-24 min-h-screen">
         <div className="container mx-auto px-4 md:px-8 max-w-5xl">

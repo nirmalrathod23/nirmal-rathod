@@ -4,12 +4,37 @@ import { Footer } from "@/components/layout/footer";
 import { ContactForm } from "@/components/ui/contact-form";
 import { contactData } from "@/lib/data/contact";
 import { pageSeo } from "@/lib/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata: Metadata = pageSeo.contact;
 
 export default function ContactPage() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "name": "Contact Nirmal Rathod",
+        "description": pageSeo.contact.description,
+        "url": "https://nirmal-rathod.vercel.app/contact",
+        "breadcrumb": {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://nirmal-rathod.vercel.app"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Contact",
+              "item": "https://nirmal-rathod.vercel.app/contact"
+            }
+          ]
+        }
+      }} />
       <Navbar />
       <main className="pt-32 pb-24 min-h-screen">
         <div className="container mx-auto px-4 md:px-8 max-w-5xl">
