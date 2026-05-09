@@ -16,6 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${project.title} — Case Study`,
     description: project.shortDescription,
+    alternates: { canonical: `https://nirmal-rathod.vercel.app/projects/${slug}` },
   };
 }
 

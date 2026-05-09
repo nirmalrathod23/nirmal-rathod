@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "Terms of Service for Nirmal Rathod's portfolio website. Read the terms governing your use of our website and services.",
-  alternates: { canonical: "/terms-of-service" },
+  alternates: { canonical: "https://nirmal-rathod.vercel.app/terms-of-service" },
 };
 
 const sections = [

@@ -12,7 +12,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = blogData.find((p) => p.slug === slug);
   if (!post) return { title: "Post Not Found" };
-  return { title: post.title, description: post.excerpt };
+  return { 
+    title: post.title, 
+    description: post.excerpt,
+    alternates: { canonical: `https://nirmal-rathod.vercel.app/blog/${slug}` },
+  };
 }
 
 export function generateStaticParams() {

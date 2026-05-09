@@ -68,49 +68,60 @@ export const pageSeo = {
     title: "Nirmal Rathod | Product Designer & Web Developer",
     description:
       "Premium portfolio of Nirmal Rathod — Product Designer, UI/UX Designer, and Web Developer based in Gujarat.",
-    alternates: { canonical: "/" },
+    alternates: { canonical: "https://nirmal-rathod.vercel.app/" },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   },
   services: {
     title: "Services",
     description:
       "Explore my core services: Brand Design, UI/UX Design, WordPress Development, and Social Media Marketing.",
-    alternates: { canonical: "/services" },
+    alternates: { canonical: "https://nirmal-rathod.vercel.app/services" },
   },
   projects: {
     title: "Projects & Case Studies",
     description:
       "Browse a curated collection of my recent projects across UI/UX, Brand Design, Social Media, and WordPress Development.",
-    alternates: { canonical: "/projects" },
+    alternates: { canonical: "https://nirmal-rathod.vercel.app/projects" },
   },
   about: {
     title: "About",
     description:
       "Learn about Nirmal Rathod's background, design philosophy, and workflow. Based in Gujarat, with experience at SeaNeB.",
-    alternates: { canonical: "/about" },
+    alternates: { canonical: "https://nirmal-rathod.vercel.app/about" },
   },
   skills: {
     title: "Skills & Tools",
     description:
       "A comprehensive overview of Nirmal Rathod's technical skills, design tools, and development stack.",
-    alternates: { canonical: "/skills" },
+    alternates: { canonical: "https://nirmal-rathod.vercel.app/skills" },
   },
   experience: {
     title: "Experience & Education",
     description:
       "A timeline of Nirmal Rathod's professional experience, including roles at SeaNeB, freelance work, and education.",
-    alternates: { canonical: "/experience" },
+    alternates: { canonical: "https://nirmal-rathod.vercel.app/experience" },
   },
   contact: {
     title: "Contact",
     description:
       "Ready to elevate your brand? Get in touch to discuss your next project — from UI/UX design to WordPress development.",
-    alternates: { canonical: "/contact" },
+    alternates: { canonical: "https://nirmal-rathod.vercel.app/contact" },
   },
   blog: {
     title: "Blog & Insights",
     description:
       "Insights on UI/UX design, web development, branding, and freelancing from Nirmal Rathod.",
-    alternates: { canonical: "/blog" },
+    alternates: { canonical: "https://nirmal-rathod.vercel.app/blog" },
   },
 } as const;
 
