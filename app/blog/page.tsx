@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Blog",
   description:
     "Insights on UI/UX design, web development, branding, and freelancing from Nirmal Rathod.",
+  alternates: { canonical: "/blog" },
 };
 
 export default function BlogPage() {

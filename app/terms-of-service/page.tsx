@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/footer";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description: "Terms of Service for Nirmal Rathod's portfolio website. Read the terms governing your use of our website and services.",
+  alternates: { canonical: "/terms-of-service" },
 };
 
 const sections = [

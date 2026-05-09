@@ -43,6 +43,9 @@ export const baseSeo: Metadata = {
     index: true,
     follow: true,
   },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export const pageSeo = {
@@ -50,35 +53,42 @@ export const pageSeo = {
     title: "Nirmal Rathod | Product Designer & Web Developer",
     description:
       "Premium portfolio of Nirmal Rathod — Product Designer, UI/UX Designer, and Web Developer based in Gujarat.",
+    alternates: { canonical: "/" },
   },
   services: {
     title: "Services",
     description:
       "Explore my core services: Brand Design, UI/UX Design, WordPress Development, and Social Media Marketing.",
+    alternates: { canonical: "/services" },
   },
   projects: {
     title: "Projects & Case Studies",
     description:
       "Browse a curated collection of my recent projects across UI/UX, Brand Design, Social Media, and WordPress Development.",
+    alternates: { canonical: "/projects" },
   },
   about: {
     title: "About",
     description:
       "Learn about Nirmal Rathod's background, design philosophy, and workflow. Based in Gujarat, with experience at SeaNeB.",
+    alternates: { canonical: "/about" },
   },
   skills: {
     title: "Skills & Tools",
     description:
       "A comprehensive overview of Nirmal Rathod's technical skills, design tools, and development stack.",
+    alternates: { canonical: "/skills" },
   },
   experience: {
     title: "Experience & Education",
     description:
       "A timeline of Nirmal Rathod's professional experience, including roles at SeaNeB, freelance work, and education.",
+    alternates: { canonical: "/experience" },
   },
   contact: {
     title: "Contact",
     description:
       "Ready to elevate your brand? Get in touch to discuss your next project — from UI/UX design to WordPress development.",
+    alternates: { canonical: "/contact" },
   },
 } as const;
