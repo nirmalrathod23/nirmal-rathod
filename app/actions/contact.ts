@@ -5,8 +5,6 @@ import { ContactEmailTemplate } from "@/components/email/email-template";
 import { render } from "@react-email/render";
 import { z } from "zod";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const contactSchema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Invalid email address"),
@@ -26,6 +24,8 @@ export async function submitContactForm(
   formData: FormData
 ): Promise<ContactState> {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     const rawData = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
