@@ -2,14 +2,25 @@
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { navLinks, ctaButton } from "@/lib/data/navigation";
+
+interface NavLink {
+  name: string;
+  href: string;
+}
+
+interface CtaButton {
+  text: string;
+  href: string;
+}
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  navLinks: NavLink[];
+  ctaButton: CtaButton;
 }
 
-export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+export function MobileMenu({ isOpen, onClose, navLinks, ctaButton }: MobileMenuProps) {
   return (
     <AnimatePresence>
       {isOpen && (

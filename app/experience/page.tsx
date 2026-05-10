@@ -1,14 +1,16 @@
 import { Metadata } from "next";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { experienceData } from "@/lib/data/experience";
 import { TimelineItem } from "@/components/ui/timeline-item";
 import { pageSeo } from "@/lib/data/seo";
 import { JsonLd } from "@/components/seo/json-ld";
+import { getExperienceItems } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = pageSeo.experience;
 
-export default function ExperiencePage() {
+export default async function ExperiencePage() {
+  const experienceData = await getExperienceItems();
+
   return (
     <>
       <JsonLd data={{
@@ -47,9 +49,21 @@ export default function ExperiencePage() {
             </p>
           </div>
           <div className="space-y-12">
-            {experienceData.map((exp, index) => (
-              <TimelineItem key={index} item={exp} index={index} isLast={index === experienceData.length - 1} />
-            ))}
+            {experienceData.map((exp, index) => {
+              // Map db schema to TimelineItem expected format
+              const mappedExp = {
+                role: exp.role || "",
+                company: exp.company || "",
+                period: `${exp.start_date || ""} - ${exp.current ? "Present" : exp.end_date || ""}`,
+                description: exp.description || "",
+                outcomes: Array.isArray(exp.technologies) ? exp.technologies as string[] : [],
+                type: (exp.type as "work" | "education") || "work"
+              };
+              
+              return (
+                <TimelineItem key={exp.id} item={mappedExp} index={index} isLast={index === experienceData.length - 1} />
+              );
+            })}
           </div>
           <div className="mt-24 p-8 md:p-12 bg-muted/30 border border-border rounded-2xl text-center">
             <h3 className="font-heading text-2xl font-bold mb-4">Looking for a full CV?</h3>

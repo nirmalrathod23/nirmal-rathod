@@ -2,22 +2,39 @@
 
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import { projectsData, projectCategories } from "@/lib/data/projects";
 import { ProjectCard } from "@/components/ui/project-card";
 import { FilterTabs } from "@/components/ui/filter-tabs";
+import { Database } from "@/lib/supabase/types";
 
-export function ProjectGrid() {
+type ProjectRow = Database['public']['Tables']['projects']['Row'];
+
+interface ProjectGridProps {
+  projects: ProjectRow[];
+}
+
+export function ProjectGrid({ projects }: ProjectGridProps) {
   const [activeCategory, setActiveCategory] = useState("All");
+
+  if (!projects || projects.length === 0) {
+    return (
+      <div className="text-center py-24 text-muted-foreground">
+        No projects found yet. Check back later.
+      </div>
+    );
+  }
+
+  // Derive categories dynamically from projects
+  const categories = ["All", ...Array.from(new Set(projects.map((p) => p.category).filter(Boolean)))];
 
   const filteredProjects =
     activeCategory === "All"
-      ? projectsData
-      : projectsData.filter((p) => p.category === activeCategory);
+      ? projects
+      : projects.filter((p) => p.category === activeCategory);
 
   return (
     <div>
       <FilterTabs
-        categories={projectCategories}
+        categories={categories as string[]}
         active={activeCategory}
         onChange={setActiveCategory}
       />
@@ -26,12 +43,12 @@ export function ProjectGrid() {
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project, index) => (
             <ProjectCard
-              key={project.slug}
-              slug={project.slug}
-              title={project.title}
-              category={project.category}
-              shortDescription={project.shortDescription}
-              coverImage={project.coverImage}
+              key={project.slug || project.id}
+              slug={project.slug || project.id}
+              title={project.title || "Project"}
+              category={project.category || "Uncategorized"}
+              shortDescription={project.short_description || ""}
+              coverImage={project.cover_image || ""}
               index={index}
             />
           ))}

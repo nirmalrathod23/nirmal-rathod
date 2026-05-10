@@ -4,10 +4,13 @@ import { Footer } from "@/components/layout/footer";
 import { BlogGrid } from "@/components/blog/blog-grid";
 import { pageSeo } from "@/lib/data/seo";
 import { JsonLd } from "@/components/seo/json-ld";
+import { getPublishedBlogs } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = pageSeo.blog;
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogs = await getPublishedBlogs();
+
   return (
     <>
       <JsonLd data={{
@@ -46,7 +49,7 @@ export default function BlogPage() {
             </p>
           </div>
 
-          <BlogGrid />
+          <BlogGrid blogs={blogs} />
         </div>
       </main>
       <Footer />

@@ -4,10 +4,13 @@ import { Footer } from "@/components/layout/footer";
 import { ProjectGrid } from "@/components/projects/project-grid";
 import { pageSeo } from "@/lib/data/seo";
 import { JsonLd } from "@/components/seo/json-ld";
+import { getPublishedProjects } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = pageSeo.projects;
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const projects = await getPublishedProjects();
+
   return (
     <>
       <JsonLd data={{
@@ -47,7 +50,7 @@ export default function ProjectsPage() {
             </p>
           </div>
 
-          <ProjectGrid />
+          <ProjectGrid projects={projects} />
         </div>
       </main>
       <Footer />

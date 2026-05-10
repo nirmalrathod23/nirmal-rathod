@@ -3,12 +3,18 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { projectsData } from "@/lib/data/projects";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { Database } from "@/lib/supabase/types";
 
-export function FeaturedProjects() {
-  const featured = projectsData.slice(0, 3);
+type ProjectRow = Database['public']['Tables']['projects']['Row'];
+
+interface FeaturedProjectsProps {
+  projects: ProjectRow[];
+}
+
+export function FeaturedProjects({ projects }: FeaturedProjectsProps) {
+  if (!projects || projects.length === 0) return null;
 
   return (
     <section className="py-24">
@@ -29,9 +35,9 @@ export function FeaturedProjects() {
         </div>
 
         <div className="space-y-24">
-          {featured.map((project, index) => (
+          {projects.map((project, index) => (
             <motion.div
-              key={project.slug}
+              key={project.slug || project.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -40,9 +46,9 @@ export function FeaturedProjects() {
                 index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
               } items-center`}
             >
-              <Link href={`/projects/${project.slug}`} className="w-full md:w-3/5 group">
+              <Link href={`/projects/${project.slug || project.id}`} className="w-full md:w-3/5 group">
                 <div className="relative rounded-2xl overflow-hidden">
-                  <ImagePlaceholder label={project.title} src={project.coverImage} aspectRatio="video" />
+                  <ImagePlaceholder label={project.title || "Project"} src={project.cover_image || ""} aspectRatio="video" />
                   <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/5 transition-colors duration-500" />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 scale-95 group-hover:scale-100">
                     <div className="glass text-foreground px-6 py-3 rounded-full font-medium flex items-center gap-2 shadow-lift">
@@ -55,15 +61,15 @@ export function FeaturedProjects() {
               <div className="w-full md:w-2/5 space-y-5">
                 <div className="space-y-2">
                   <span className="text-xs font-bold text-muted-foreground tracking-widest uppercase">
-                    {project.category}
+                    {project.category || "Uncategorized"}
                   </span>
                   <h3 className="font-heading text-3xl md:text-4xl font-bold">{project.title}</h3>
                 </div>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  {project.shortDescription}
+                  {project.short_description}
                 </p>
                 <Link
-                  href={`/projects/${project.slug}`}
+                  href={`/projects/${project.slug || project.id}`}
                   className="inline-flex items-center text-base font-medium pb-1 border-b border-foreground hover:text-muted-foreground hover:border-muted-foreground transition-colors"
                 >
                   Explore Case Study

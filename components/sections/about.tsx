@@ -2,10 +2,13 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { marqueeRow1, marqueeRow2, marqueeRow3 } from "@/lib/data/skills";
+import { Database } from "@/lib/supabase/types";
+
+type SkillRow = Database['public']['Tables']['skills']['Row'];
 
 function MarqueeStrip({ items, reverse = false }: { items: string[]; reverse?: boolean }) {
-  const doubled = [...items, ...items];
+  if (items.length === 0) return null;
+  const doubled = [...items, ...items, ...items]; // triple to ensure enough scrolling length
   return (
     <div className="marquee-mask overflow-hidden">
       <div className={`flex whitespace-nowrap gap-4 md:gap-5 ${reverse ? "animate-marquee-reverse" : "animate-marquee"}`}>
@@ -22,7 +25,28 @@ function MarqueeStrip({ items, reverse = false }: { items: string[]; reverse?: b
   );
 }
 
-export function About() {
+interface AboutProps {
+  skills: SkillRow[];
+}
+
+export function About({ skills }: AboutProps) {
+  // Split skills into 3 rows for the marquee
+  const skillNames = skills.map(s => s.name || "").filter(Boolean);
+  
+  const itemsPerRow = Math.ceil(skillNames.length / 3) || 5;
+  const row1 = skillNames.slice(0, itemsPerRow);
+  const row2 = skillNames.slice(itemsPerRow, itemsPerRow * 2);
+  const row3 = skillNames.slice(itemsPerRow * 2);
+
+  // Fallbacks if no skills are present
+  const fallbackRow1 = ["Figma", "React", "Next.js", "Tailwind CSS", "TypeScript"];
+  const fallbackRow2 = ["WordPress", "Webflow", "Shopify", "Illustrator", "Photoshop"];
+  const fallbackRow3 = ["Framer", "Protopie", "UI/UX", "Branding", "SEO"];
+
+  const marqueeRow1 = row1.length > 0 ? row1 : fallbackRow1;
+  const marqueeRow2 = row2.length > 0 ? row2 : fallbackRow2;
+  const marqueeRow3 = row3.length > 0 ? row3 : fallbackRow3;
+
   return (
     <section className="py-24 bg-foreground text-background">
       <div className="container mx-auto px-4 md:px-8">

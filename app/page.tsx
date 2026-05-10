@@ -10,10 +10,17 @@ import { ContactCTA } from "@/components/sections/contact";
 import { Metadata } from "next";
 import { pageSeo, schemas } from "@/lib/data/seo";
 import { JsonLd } from "@/components/seo/json-ld";
+import { getFeaturedProjects, getPublishedServices, getExperienceItems, getTestimonials, getSkills } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = pageSeo.home;
 
-export default function Home() {
+export default async function Home() {
+  const projects = await getFeaturedProjects();
+  const services = await getPublishedServices();
+  const experience = await getExperienceItems();
+  const testimonials = await getTestimonials();
+  const skills = await getSkills();
+
   return (
     <>
       <JsonLd data={{
@@ -37,11 +44,11 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <Services />
-        <FeaturedProjects />
-        <About />
-        <Experience />
-        <Testimonials />
+        <Services services={services} />
+        <FeaturedProjects projects={projects} />
+        <About skills={skills} />
+        <Experience experience={experience} />
+        <Testimonials testimonials={testimonials} />
         <ContactCTA />
       </main>
       <Footer />

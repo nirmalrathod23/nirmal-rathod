@@ -5,22 +5,24 @@ import { ArrowLeft, Clock } from "lucide-react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { JsonLd } from "@/components/seo/json-ld";
-import { blogData, type ContentBlock } from "@/lib/data/blog";
+import { type ContentBlock } from "@/lib/data/blog";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { getBlogBySlug, getAllBlogSlugs, getRelatedBlogs } from "@/lib/supabase/queries";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogData.find((p) => p.slug === slug);
+  const post = await getBlogBySlug(slug);
   if (!post) return { title: "Post Not Found" };
   return { 
-    title: post.title, 
-    description: post.excerpt,
+    title: post.seo_title || post.title, 
+    description: post.seo_description || post.excerpt,
     alternates: { canonical: `https://nirmal-rathod.vercel.app/blog/${slug}` },
   };
 }
 
-export function generateStaticParams() {
-  return blogData.map((post) => ({ slug: post.slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllBlogSlugs();
+  return slugs.map((post) => ({ slug: post.slug }));
 }
 
 function BlockRenderer({ block }: { block: ContentBlock }) {
@@ -34,11 +36,11 @@ function BlockRenderer({ block }: { block: ContentBlock }) {
         </h2>
       );
     case "image":
-      return <ImagePlaceholder label={block.label} src={block.src} aspectRatio={block.aspect || "video"} className="rounded-xl" />;
+      return <ImagePlaceholder label={block.label || ""} src={block.src || ""} aspectRatio={block.aspect || "video"} className="rounded-xl" />;
     case "list":
       return (
         <ul className="space-y-3 pl-1">
-          {block.items.map((item, idx) => (
+          {block.items?.map((item, idx) => (
             <li key={idx} className="flex items-start text-lg text-foreground/80">
               <span className="mt-2.5 mr-3 w-1.5 h-1.5 rounded-full bg-foreground/40 shrink-0" />
               <span className="leading-relaxed">{item}</span>
@@ -68,24 +70,43 @@ function BlockRenderer({ block }: { block: ContentBlock }) {
 
 export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = blogData.find((p) => p.slug === slug);
+  const post = await getBlogBySlug(slug);
+  
   if (!post) notFound();
 
-  const headings = post.content.filter((b): b is Extract<ContentBlock, { type: "heading" }> => b.type === "heading");
-  const relatedPosts = blogData.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, 2);
+  const relatedPosts = await getRelatedBlogs(post.category || "", slug);
+
+  let contentBlocks: ContentBlock[] = [];
+  let rawHtml = "";
+
+  if (post.content) {
+    try {
+      // Try to parse as JSON array of blocks
+      contentBlocks = JSON.parse(post.content);
+      if (!Array.isArray(contentBlocks)) {
+        contentBlocks = [];
+        rawHtml = post.content;
+      }
+    } catch (e) {
+      // If it fails, assume it's raw HTML or markdown
+      rawHtml = post.content;
+    }
+  }
+
+  const headings = contentBlocks.filter((b): b is Extract<ContentBlock, { type: "heading" }> => b.type === "heading");
 
   return (
     <>
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "BlogPosting",
-        "headline": post.title,
-        "description": post.excerpt,
-        "image": post.coverImage,
-        "datePublished": post.date,
+        "headline": post.title || "",
+        "description": post.excerpt || "",
+        "image": post.cover_image || "",
+        "datePublished": post.published_at || post.created_at,
         "author": {
           "@type": "Person",
-          "name": post.author
+          "name": "Nirmal Rathod"
         },
         "url": `https://nirmal-rathod.vercel.app/blog/${slug}`,
         "breadcrumb": {
@@ -106,7 +127,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
             {
               "@type": "ListItem",
               "position": 3,
-              "name": post.title,
+              "name": post.title || "Blog Post",
               "item": `https://nirmal-rathod.vercel.app/blog/${slug}`
             }
           ]
@@ -126,12 +147,14 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           <header className="mb-12 max-w-3xl">
             <div className="flex items-center gap-3 text-sm text-muted-foreground mb-6">
               <span className="px-3 py-1 rounded-full border border-border font-medium text-xs">
-                {post.category}
+                {post.category || "General"}
               </span>
-              <span className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                {post.readTime}
-              </span>
+              {post.read_time && (
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" />
+                  {post.read_time}
+                </span>
+              )}
             </div>
             <h1 className="font-heading text-3xl md:text-5xl font-bold tracking-tighter mb-6 leading-tight text-balance">
               {post.title}
@@ -144,23 +167,34 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
                 NR
               </div>
               <div>
-                <p className="font-medium text-sm">{post.author}</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(post.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-                </p>
+                <p className="font-medium text-sm">Nirmal Rathod</p>
+                {post.published_at && (
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(post.published_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                  </p>
+                )}
               </div>
             </div>
           </header>
 
           {/* Cover image */}
-          <ImagePlaceholder label="Article Cover" src={post.coverImage} aspectRatio="video" className="mb-12 max-w-3xl" />
+          {post.cover_image && (
+            <ImagePlaceholder label="Article Cover" src={post.cover_image} aspectRatio="video" className="mb-12 max-w-3xl" />
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_220px] gap-12">
             {/* Article content */}
             <article className="space-y-6 min-w-0">
-              {post.content.map((block, idx) => (
-                <BlockRenderer key={idx} block={block} />
-              ))}
+              {contentBlocks.length > 0 ? (
+                contentBlocks.map((block, idx) => (
+                  <BlockRenderer key={idx} block={block} />
+                ))
+              ) : (
+                <div 
+                  className="prose prose-lg dark:prose-invert max-w-none text-foreground/85 leading-[1.85]"
+                  dangerouslySetInnerHTML={{ __html: rawHtml }}
+                />
+              )}
             </article>
 
             {/* Sticky TOC sidebar */}
@@ -190,26 +224,26 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           <div className="mt-16 pt-8 border-t border-border max-w-3xl">
             <div className="flex items-center gap-3 flex-wrap">
               <span className="text-sm font-medium text-muted-foreground">Tags:</span>
-              <span className="px-3 py-1 rounded-full border border-border text-xs font-medium">{post.category}</span>
-              <span className="px-3 py-1 rounded-full border border-border text-xs font-medium">Portfolio</span>
-              <span className="px-3 py-1 rounded-full border border-border text-xs font-medium">Freelance</span>
+              <span className="px-3 py-1 rounded-full border border-border text-xs font-medium">{post.category || "General"}</span>
             </div>
           </div>
 
           {/* Related posts */}
-          {relatedPosts.length > 0 && (
+          {relatedPosts && relatedPosts.length > 0 && (
             <div className="mt-20 max-w-3xl">
               <h2 className="font-heading text-2xl font-bold mb-8">Related Articles</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {relatedPosts.map((related) => (
                   <Link
-                    key={related.slug}
-                    href={`/blog/${related.slug}`}
+                    key={related.slug || related.id}
+                    href={`/blog/${related.slug || related.id}`}
                     className="group block rounded-2xl border border-border p-6 hover:shadow-card hover:border-foreground/15 transition-all duration-300"
                   >
-                    <span className="text-xs text-muted-foreground mb-3 block">
-                      {new Date(related.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                    </span>
+                    {related.published_at && (
+                      <span className="text-xs text-muted-foreground mb-3 block">
+                        {new Date(related.published_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      </span>
+                    )}
                     <h3 className="font-heading text-lg font-bold group-hover:text-muted-foreground transition-colors leading-snug mb-2">
                       {related.title}
                     </h3>

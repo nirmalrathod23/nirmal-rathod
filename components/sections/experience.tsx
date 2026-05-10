@@ -1,12 +1,20 @@
 "use client";
 
-import { experienceData } from "@/lib/data/experience";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TimelineItem } from "@/components/ui/timeline-item";
 import Link from "next/link";
+import { Database } from "@/lib/supabase/types";
 
-export function Experience() {
-  const preview = experienceData.slice(0, 3);
+type ExperienceRow = Database['public']['Tables']['experience_items']['Row'];
+
+interface ExperienceProps {
+  experience: ExperienceRow[];
+}
+
+export function Experience({ experience }: ExperienceProps) {
+  if (!experience || experience.length === 0) return null;
+
+  const preview = experience.slice(0, 3);
 
   return (
     <section className="py-24 bg-muted/20">
@@ -14,14 +22,26 @@ export function Experience() {
         <SectionHeading title="Experience" centered />
 
         <div className="space-y-12">
-          {preview.map((exp, index) => (
-            <TimelineItem
-              key={index}
-              item={exp}
-              index={index}
-              isLast={index === preview.length - 1}
-            />
-          ))}
+          {preview.map((exp, index) => {
+            // Map db schema to TimelineItem expected format
+            const mappedExp = {
+              role: exp.role || "",
+              company: exp.company || "",
+              period: `${exp.start_date || ""} - ${exp.current ? "Present" : exp.end_date || ""}`,
+              description: exp.description || "",
+              outcomes: [],
+              type: (exp.type as "work" | "education") || "work"
+            };
+
+            return (
+              <TimelineItem
+                key={exp.id}
+                item={mappedExp}
+                index={index}
+                isLast={index === preview.length - 1}
+              />
+            );
+          })}
         </div>
 
         <div className="mt-16 text-center">

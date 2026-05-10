@@ -1,11 +1,19 @@
 "use client";
 
-import { servicesData } from "@/lib/data/services";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ServiceCard } from "@/components/ui/service-card";
 import Link from "next/link";
+import { Database } from "@/lib/supabase/types";
 
-export function Services() {
+type ServiceRow = Database['public']['Tables']['services']['Row'];
+
+interface ServicesProps {
+  services: ServiceRow[];
+}
+
+export function Services({ services }: ServicesProps) {
+  if (!services || services.length === 0) return null;
+
   return (
     <section className="py-24 bg-muted/20">
       <div className="container mx-auto px-4 md:px-8">
@@ -15,12 +23,12 @@ export function Services() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {servicesData.map((service, index) => (
+          {services.map((service, index) => (
             <ServiceCard
               key={service.id}
-              title={service.title}
-              description={service.shortDescription}
-              icon={service.icon}
+              title={service.title || ""}
+              description={service.description || ""}
+              icon={service.icon || "PenTool"} // fallback icon
               id={service.id}
               index={index}
             />

@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { JsonLd } from "@/components/seo/json-ld";
+import { getPageContent } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -26,7 +27,12 @@ const sections = [
   { id: "contact", title: "14. Contact Information" },
 ];
 
-export default function TermsOfServicePage() {
+export default async function TermsOfServicePage() {
+  const pageData = await getPageContent("terms-of-service");
+
+  const title = pageData?.title || "Terms of Service";
+  const content = pageData?.content;
+
   return (
     <>
       <JsonLd data={{
@@ -58,16 +64,16 @@ export default function TermsOfServicePage() {
         <div className="container mx-auto px-4 md:px-8 max-w-4xl">
           <div className="mb-16">
             <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tighter mb-4">
-              Terms of Service
+              {title}
             </h1>
             <p className="text-muted-foreground">
-              Last updated: May 9, 2026
+              Last updated: {pageData?.updated_at ? new Date(pageData.updated_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "May 9, 2026"}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-12">
             {/* Table of Contents */}
-            <aside className="hidden lg:block">
+            <aside className={content ? "hidden" : "hidden lg:block"}>
               <div className="sticky top-32">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">
                   Table of Contents
@@ -88,13 +94,20 @@ export default function TermsOfServicePage() {
 
             {/* Content */}
             <div className="space-y-12 text-foreground/85 leading-relaxed">
-              <p className="text-lg">
-                Welcome to <strong className="text-foreground">nirmalrathod.com</strong> (the "Site").
-                These Terms of Service ("Terms") govern your access to and use of our Site and any
-                services provided by Nirmal Rathod ("we," "our," or "us"). By accessing or using the
-                Site, you agree to be bound by these Terms. If you do not agree, please do not use the
-                Site.
-              </p>
+              {content ? (
+                <div 
+                  className="prose prose-lg dark:prose-invert max-w-none text-foreground/85 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              ) : (
+                <>
+                  <p className="text-lg">
+                    Welcome to <strong className="text-foreground">nirmalrathod.com</strong> (the "Site").
+                    These Terms of Service ("Terms") govern your access to and use of our Site and any
+                    services provided by Nirmal Rathod ("we," "our," or "us"). By accessing or using the
+                    Site, you agree to be bound by these Terms. If you do not agree, please do not use the
+                    Site.
+                  </p>
 
               <section id="acceptance" className="scroll-offset space-y-4">
                 <h2 className="font-heading text-2xl font-bold text-foreground">1. Acceptance of Terms</h2>
@@ -258,6 +271,8 @@ export default function TermsOfServicePage() {
                   <p className="text-muted-foreground">Location: Gujarat, India</p>
                 </div>
               </section>
+            </>
+          )}
             </div>
           </div>
         </div>

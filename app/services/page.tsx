@@ -1,21 +1,75 @@
 import { Metadata } from "next";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { servicesData } from "@/lib/data/services";
 import { pageSeo } from "@/lib/data/seo";
 import { JsonLd } from "@/components/seo/json-ld";
-import { PenTool, Layout, Code, Share2, CheckCircle2, type LucideIcon } from "lucide-react";
+import {
+  PenTool, Layout, Code, Share2, CheckCircle2, type LucideIcon,
+  Palette, Globe, TrendingUp, Layers, Smartphone, Monitor, Megaphone,
+  BarChart, ShoppingCart, Search, Camera, Video, Music, FileText,
+  Settings, Zap, Star, Heart, Shield, Database, Cloud, Lock,
+  Mail, MessageSquare, Users, Briefcase, Award, Cpu, Wifi,
+} from "lucide-react";
+import { getPublishedServices } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = pageSeo.services;
 
+// Supports both PascalCase (from admin panel) and kebab-case formats
 const iconMap: Record<string, LucideIcon> = {
+  // kebab-case
   "pen-tool": PenTool,
   "layout": Layout,
   "code": Code,
   "share-2": Share2,
+  "palette": Palette,
+  "globe": Globe,
+  "trending-up": TrendingUp,
+  "layers": Layers,
+  "smartphone": Smartphone,
+  "monitor": Monitor,
+  "megaphone": Megaphone,
+  "bar-chart": BarChart,
+  "shopping-cart": ShoppingCart,
+  "search": Search,
+  // PascalCase (from admin panel)
+  "PenTool": PenTool,
+  "Layout": Layout,
+  "Code": Code,
+  "Share2": Share2,
+  "Palette": Palette,
+  "Globe": Globe,
+  "TrendingUp": TrendingUp,
+  "Layers": Layers,
+  "Smartphone": Smartphone,
+  "Monitor": Monitor,
+  "Megaphone": Megaphone,
+  "BarChart": BarChart,
+  "ShoppingCart": ShoppingCart,
+  "Search": Search,
+  "Camera": Camera,
+  "Video": Video,
+  "Music": Music,
+  "FileText": FileText,
+  "Settings": Settings,
+  "Zap": Zap,
+  "Star": Star,
+  "Heart": Heart,
+  "Shield": Shield,
+  "Database": Database,
+  "Cloud": Cloud,
+  "Lock": Lock,
+  "Mail": Mail,
+  "MessageSquare": MessageSquare,
+  "Users": Users,
+  "Briefcase": Briefcase,
+  "Award": Award,
+  "Cpu": Cpu,
+  "Wifi": Wifi,
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const servicesData = await getPublishedServices();
+
   return (
     <>
       <JsonLd data={{
@@ -35,8 +89,8 @@ export default function ServicesPage() {
             "@type": "Offer",
             "itemOffered": {
               "@type": "Service",
-              "name": s.title,
-              "description": s.description
+              "name": s.title || "Service",
+              "description": s.description || ""
             }
           }))
         },
@@ -73,9 +127,17 @@ export default function ServicesPage() {
 
           <div className="space-y-32">
             {servicesData.map((service) => {
-              const IconComponent = iconMap[service.icon] || Layout;
+              const IconComponent = iconMap[service.icon || "layout"] || Layout;
+              
+              // Extract features from jsonb
+              const features = service.features as any || {};
+              const benefits = features.benefits || "Tailored solutions that drive business growth and user engagement.";
+              const deliverables = Array.isArray(features.deliverables) ? features.deliverables : ["Source Files", "Documentation"];
+              const process = Array.isArray(features.process) ? features.process : ["Discovery", "Execution", "Delivery"];
+              const faq = features.faq || { q: "How long does it take?", a: "Timelines vary by project scope, typically ranging from 2-8 weeks." };
+
               return (
-                <div key={service.id} id={service.id} className="scroll-offset">
+                <div key={service.id} id={service.slug || service.id} className="scroll-offset">
                   <div className="flex items-center gap-4 mb-8">
                     <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center">
                       <IconComponent className="h-7 w-7 text-foreground" />
@@ -92,7 +154,7 @@ export default function ServicesPage() {
                       </p>
                       <div className="p-8 rounded-2xl bg-muted/30 border border-border">
                         <h3 className="text-lg font-bold mb-4">The Value</h3>
-                        <p className="text-foreground/80 leading-relaxed">{service.benefits}</p>
+                        <p className="text-foreground/80 leading-relaxed">{benefits}</p>
                       </div>
                     </div>
 
@@ -102,7 +164,7 @@ export default function ServicesPage() {
                           Deliverables
                         </h3>
                         <ul className="space-y-4">
-                          {service.deliverables.map((item, idx) => (
+                          {deliverables.map((item: string, idx: number) => (
                             <li key={idx} className="flex items-start">
                               <CheckCircle2 className="h-5 w-5 text-foreground mr-3 shrink-0 mt-0.5" />
                               <span className="text-lg text-muted-foreground">{item}</span>
@@ -116,7 +178,7 @@ export default function ServicesPage() {
                           Process
                         </h3>
                         <ol className="space-y-3">
-                          {service.process.map((step, idx) => (
+                          {process.map((step: string, idx: number) => (
                             <li key={idx} className="flex items-start text-muted-foreground">
                               <span className="font-heading font-bold text-foreground mr-3 mt-px">
                                 {String(idx + 1).padStart(2, "0")}
@@ -131,8 +193,8 @@ export default function ServicesPage() {
                         <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">
                           Common Question
                         </h4>
-                        <p className="font-medium text-foreground mb-1">{service.faq.q}</p>
-                        <p className="text-muted-foreground text-sm">{service.faq.a}</p>
+                        <p className="font-medium text-foreground mb-1">{faq.q}</p>
+                        <p className="text-muted-foreground text-sm">{faq.a}</p>
                       </div>
                     </div>
                   </div>

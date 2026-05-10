@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/json-ld";
+import { getPageContent } from "@/lib/supabase/queries";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -24,7 +25,12 @@ const sections = [
   { id: "contact", title: "11. Contact Information" },
 ];
 
-export default function PrivacyPolicyPage() {
+export default async function PrivacyPolicyPage() {
+  const pageData = await getPageContent("privacy-policy");
+
+  const title = pageData?.title || "Privacy Policy";
+  const content = pageData?.content;
+
   return (
     <>
       <JsonLd data={{
@@ -56,16 +62,16 @@ export default function PrivacyPolicyPage() {
         <div className="container mx-auto px-4 md:px-8 max-w-4xl">
           <div className="mb-16">
             <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tighter mb-4">
-              Privacy Policy
+              {title}
             </h1>
             <p className="text-muted-foreground">
-              Last updated: May 9, 2026
+              Last updated: {pageData?.updated_at ? new Date(pageData.updated_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "May 9, 2026"}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-12">
             {/* Table of Contents */}
-            <aside className="hidden lg:block">
+            <aside className={content ? "hidden" : "hidden lg:block"}>
               <div className="sticky top-32">
                 <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">
                   Table of Contents
@@ -86,13 +92,20 @@ export default function PrivacyPolicyPage() {
 
             {/* Content */}
             <div className="space-y-12 text-foreground/85 leading-relaxed">
-              <p className="text-lg">
-                Nirmal Rathod ("we," "our," or "us") respects your privacy and is committed to protecting
-                the personal data you share with us. This Privacy Policy explains how we collect, use,
-                disclose, and safeguard your information when you visit our website{" "}
-                <strong className="text-foreground">nirmalrathod.com</strong> (the "Site"), regardless
-                of where you access it from worldwide. Please read it carefully.
-              </p>
+              {content ? (
+                <div 
+                  className="prose prose-lg dark:prose-invert max-w-none text-foreground/85 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              ) : (
+                <>
+                  <p className="text-lg">
+                    Nirmal Rathod ("we," "our," or "us") respects your privacy and is committed to protecting
+                    the personal data you share with us. This Privacy Policy explains how we collect, use,
+                    disclose, and safeguard your information when you visit our website{" "}
+                    <strong className="text-foreground">nirmalrathod.com</strong> (the "Site"), regardless
+                    of where you access it from worldwide. Please read it carefully.
+                  </p>
 
               <section id="information-we-collect" className="scroll-offset space-y-4">
                 <h2 className="font-heading text-2xl font-bold text-foreground">1. Information We Collect</h2>
@@ -221,6 +234,8 @@ export default function PrivacyPolicyPage() {
                   <p className="text-muted-foreground">Location: Gujarat, India</p>
                 </div>
               </section>
+            </>
+          )}
             </div>
           </div>
         </div>

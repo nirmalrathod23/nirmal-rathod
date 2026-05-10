@@ -1,14 +1,33 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { PenTool, Layout, Code, Share2, type LucideIcon } from "lucide-react";
+import {
+  PenTool, Layout, Code, Share2, type LucideIcon,
+  Palette, Globe, TrendingUp, Layers, Smartphone, Monitor, Megaphone,
+  BarChart, ShoppingCart, Search, Camera, Video, Music, FileText,
+  Settings, Zap, Star, Heart, Shield, Database, Cloud, Lock,
+  Mail, MessageSquare, Users, Briefcase, Award, Cpu, Wifi,
+} from "lucide-react";
 import Link from "next/link";
 
+// Supports both PascalCase (from admin panel) and kebab-case formats
 const iconMap: Record<string, LucideIcon> = {
-  "pen-tool": PenTool,
-  "layout": Layout,
-  "code": Code,
-  "share-2": Share2,
+  // kebab-case
+  "pen-tool": PenTool, "layout": Layout, "code": Code, "share-2": Share2,
+  "palette": Palette, "globe": Globe, "trending-up": TrendingUp,
+  "layers": Layers, "smartphone": Smartphone, "monitor": Monitor,
+  "megaphone": Megaphone, "bar-chart": BarChart, "shopping-cart": ShoppingCart,
+  "search": Search,
+  // PascalCase (from admin panel)
+  "PenTool": PenTool, "Layout": Layout, "Code": Code, "Share2": Share2,
+  "Palette": Palette, "Globe": Globe, "TrendingUp": TrendingUp,
+  "Layers": Layers, "Smartphone": Smartphone, "Monitor": Monitor,
+  "Megaphone": Megaphone, "BarChart": BarChart, "ShoppingCart": ShoppingCart,
+  "Search": Search, "Camera": Camera, "Video": Video, "Music": Music,
+  "FileText": FileText, "Settings": Settings, "Zap": Zap, "Star": Star,
+  "Heart": Heart, "Shield": Shield, "Database": Database, "Cloud": Cloud,
+  "Lock": Lock, "Mail": Mail, "MessageSquare": MessageSquare, "Users": Users,
+  "Briefcase": Briefcase, "Award": Award, "Cpu": Cpu, "Wifi": Wifi,
 };
 
 interface ServiceCardProps {

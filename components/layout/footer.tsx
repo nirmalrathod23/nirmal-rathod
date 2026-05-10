@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { footerLinks, siteBrand } from "@/lib/data/navigation";
-import { socialLinks } from "@/lib/data/socials";
+import { getFooterLinks, getSiteBrand, getSocialLinks } from "@/lib/supabase/queries";
 
-export function Footer() {
+export async function Footer() {
   const currentYear = new Date().getFullYear();
+  const footerLinks = await getFooterLinks();
+  const siteBrand = await getSiteBrand();
+  const socialLinks = await getSocialLinks();
 
   return (
     <footer className="border-t border-border bg-background py-16">
